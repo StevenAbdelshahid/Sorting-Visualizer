@@ -1,0 +1,158 @@
+body {
+    background-color: #1e272e;
+    color: #ecf0f1;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    margin: 20px;
+    font-size: 2.5em;
+    color: #ffa801;
+}
+
+#main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#left-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+}
+
+#reshuffle-btn, #pause-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    padding: 0;
+    background-color: #87CEFA;
+    color: #1e272e;
+    margin: 5px 0;
+    border: none;
+    cursor: pointer;
+}
+
+#reshuffle-btn:hover, #pause-btn:hover {
+    background-color: #7AC5F2;
+}
+
+canvas {
+    background-color: #2f3640;
+    border: 2px solid #ecf0f1;
+}
+
+#controls {
+    margin-bottom: 20px;
+}
+
+#sort-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#sort-buttons button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: #87CEFA;
+    color: #1e272e;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#sort-buttons button.selected {
+    background-color: #4682B4;
+    color: #ecf0f1;
+}
+
+#speed-control {
+    margin-top: 10px;
+}
+
+#speed-display {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+#info-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    background-color: #87CEFA;
+    color: #1e272e;
+    border: none;
+    border-radius: 50%;
+    text-decoration: none;
+    line-height: 40px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#info-btn:hover {
+    background-color: #7AC5F2;
+}
+
+/* Styles for info.html */
+
+/* Styles for info.html */
+
+#info-content {
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+#algorithm-list {
+    list-style: none;
+    padding: 0;
+}
+
+.algorithm-item {
+    background-color: #2f3640;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.algorithm-item h2 {
+    margin-top: 0;
+}
+
+.algo-info.hidden {
+    display: none;
+}
+
+.algo-info {
+    margin-top: 10px;
+}
+
+.algo-info ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+#back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #87CEFA;
+    color: #1e272e;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+#back-btn:hover {
+    background-color: #7AC5F2;
+}

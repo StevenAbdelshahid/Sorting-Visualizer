@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sorting Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Sorting Visualizer</h1>
+    <div id="main-container">
+        <div id="left-panel">
+            <button id="reshuffle-btn" onclick="reshuffleData(50)">&#x21bb;</button>
+            <button id="pause-btn" onclick="togglePause()">&#x23F8;</button>
+        </div>
+        <canvas id="visualizer" width="1000" height="600"></canvas>
+    </div>
+
+    <div id="controls">
+        <div id="sort-buttons">
+            <button id="selection-btn" onclick="startSort('selection')">Selection Sort</button>
+            <button id="quick-btn" onclick="startSort('quick')">Quick Sort</button>
+            <button id="merge-btn" onclick="startSort('merge')">Merge Sort</button>
+            <button id="bubble-btn" onclick="startSort('bubble')">Bubble Sort</button>
+            <button id="insertion-btn" onclick="startSort('insertion')">Insertion Sort</button>
+            <button id="heap-btn" onclick="startSort('heap')">Heap Sort</button>
+            <button id="shell-btn" onclick="startSort('shell')">Shell Sort</button>
+        </div>
+    </div>
+
+    <div id="speed-control">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="1" max="100" value="50">
+        <span id="speed-display">50</span>
+    </div>
+
+    <!-- Info Button -->
+    <a href="info.html" id="info-btn">i</a>
+
+    <script src="script.js"></script>
+</body>
+</html>

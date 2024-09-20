@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sorting Algorithms Information</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="info.js"></script>
+</head>
+<body>
+    <h1>Sorting Algorithms Information</h1>
+    <div id="info-content">
+        <ul id="algorithm-list">
+            <!-- Sorting algorithms listed in order -->
+            <!-- Selection Sort -->
+            <li class="algorithm-item" data-algo="selection">
+                <h2>Selection Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Selection sort repeatedly finds the minimum element from the unsorted part and moves it to the beginning.</p>
+                    <p><strong>Time Complexity:</strong></p>
+                    <ul>
+                        <li>Best Case: O(n<sup>2</sup>)</li>
+                        <li>Average Case: O(n<sup>2</sup>)</li>
+                        <li>Worst Case: O(n<sup>2</sup>)</li>
+                    </ul>
+                    <p><strong>Space Complexity:</strong> O(1)</p>
+                    <p><strong>Stable:</strong> No</p>
+                    <p><strong>Markers:</strong> Orange highlights the current minimum, red indicates the element being compared, blue shows elements being swapped.</p>
+                </div>
+            </li>
+            <!-- Insertion Sort -->
+            <li class="algorithm-item" data-algo="insertion">
+                <h2>Insertion Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Insertion sort builds the final sorted array one item at a time by inserting elements into their correct position.</p>
+                    <p><strong>Time Complexity:</strong></p>
+                    <ul>
+                        <li>Best Case: O(n)</li>
+                        <li>Average Case: O(n<sup>2</sup>)</li>
+                        <li>Worst Case: O(n<sup>2</sup>)</li>
+                    </ul>
+                    <p><strong>Space Complexity:</strong> O(1)</p>
+                    <p><strong>Stable:</strong> Yes</p>
+                    <p><strong>Markers:</strong> Orange highlights the current key element, red indicates the element being compared.</p>
+                </div>
+            </li>
+            <!-- Bubble Sort -->
+            <li class="algorithm-item" data-algo="bubble">
+                <h2>Bubble Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Bubble sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.</p>
+                    <p><strong>Time Complexity:</strong></p>
+                    <ul>
+                        <li>Best Case: O(n)</li>
+                        <li>Average Case: O(n<sup>2</sup>)</li>
+                        <li>Worst Case: O(n<sup>2</sup>)</li>
+                    </ul>
+                    <p><strong>Space Complexity:</strong> O(1)</p>
+                    <p><strong>Stable:</strong> Yes</p>
+                    <p><strong>Markers:</strong> Red indicates elements being compared, blue shows elements being swapped.</p>
+                </div>
+            </li>
+            <!-- Shell Sort -->
+            <li class="algorithm-item" data-algo="shell">
+                <h2>Shell Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Shell sort sorts elements that are far apart and successively reduces the interval between elements to be sorted.</p>
+                    <p><strong>Time Complexity:</strong> Depends on the gap sequence; typically between O(n log n) and O(n<sup>2</sup>).</p>
+                    <p><strong>Space Complexity:</strong> O(1)</p>
+                    <p><strong>Stable:</strong> No</p>
+                    <p><strong>Markers:</strong> Orange highlights the current element being inserted, red indicates elements being compared.</p>
+                </div>
+            </li>
+            <!-- Merge Sort -->
+            <li class="algorithm-item" data-algo="merge">
+                <h2>Merge Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Merge sort divides the array into halves, sorts them recursively, and then merges them.</p>
+                    <p><strong>Time Complexity:</strong></p>
+                    <ul>
+                        <li>Best Case: O(n log n)</li>
+                        <li>Average Case: O(n log n)</li>
+                        <li>Worst Case: O(n log n)</li>
+                    </ul>
+                    <p><strong>Space Complexity:</strong> O(n)</p>
+                    <p><strong>Stable:</strong> Yes</p>
+                    <p><strong>Markers:</strong> Orange indicates current elements being merged.</p>
+                </div>
+            </li>
+            <!-- Quick Sort -->
+            <li class="algorithm-item" data-algo="quick">
+                <h2>Quick Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Quick sort divides the array into sub-arrays based on a pivot and recursively sorts them.</p>
+                    <p><strong>Time Complexity:</strong></p>
+                    <ul>
+                        <li>Best Case: O(n log n)</li>
+                        <li>Average Case: O(n log n)</li>
+                        <li>Worst Case: O(n<sup>2</sup>)</li>
+                    </ul>
+                    <p><strong>Space Complexity:</strong> O(log n)</p>
+                    <p><strong>Stable:</strong> No</p>
+                    <p><strong>Markers:</strong> Purple highlights the pivot, red indicates elements being compared, blue shows elements being swapped.</p>
+                </div>
+            </li>
+            <!-- Heap Sort -->
+            <li class="algorithm-item" data-algo="heap">
+                <h2>Heap Sort</h2>
+                <div class="algo-info hidden">
+                    <p><strong>Description:</strong> Heap sort converts the array into a heap data structure and repeatedly extracts the maximum element to sort the array.</p>
+                    <p><strong>Time Complexity:</strong></p>
+                    <ul>
+                        <li>Best Case: O(n log n)</li>
+                        <li>Average Case: O(n log n)</li>
+                        <li>Worst Case: O(n log n)</li>
+                    </ul>
+                    <p><strong>Space Complexity:</strong> O(1)</p>
+                    <p><strong>Stable:</strong> No</p>
+                    <p><strong>Markers:</strong> Blue shows elements being swapped during heapify and extraction.</p>
+                </div>
+            </li>
+        </ul>
+        <a href="index.html" id="back-btn">Back to Visualizer</a>
+    </div>
+</body>
+</html>
