@@ -1,15 +1,18 @@
+// script.js
+
 const canvas = document.getElementById('visualizer');
 const ctx = canvas.getContext('2d');
 let data = [];
 let delay = 50;
+let arraySize = 50;
 let sortingInProgress = false;
 let isPaused = false;
 let shouldCancelSort = false;
 let currentSortButton = null;
 
 // Initialize random data
-function reshuffleData(size) {
-    data = Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1);
+function reshuffleData() {
+    data = Array.from({ length: arraySize }, () => Math.floor(Math.random() * 100) + 1);
     drawData();
     shouldCancelSort = true; // Cancel any ongoing sort
     sortingInProgress = false;
@@ -74,20 +77,12 @@ async function checkPaused() {
     }
 }
 
-// Function to cancel the current sorting process
-function cancelCurrentSort() {
-    shouldCancelSort = true;
-    isPaused = false;
-    sortingInProgress = false;
-    if (currentSortButton) {
-        currentSortButton.classList.remove('selected');
-        currentSortButton = null;
-    }
-}
+// Sorting algorithms implementations
 
 // Selection Sort
-async function selectionSort() {
-    let n = data.length;
+async function selectionSort(arr) {
+    let n = arr.length;
+
     for (let i = 0; i < n - 1; i++) {
         if (shouldCancelSort) return;
         let min_idx = i;
@@ -101,9 +96,8 @@ async function selectionSort() {
             });
             await sleep(delay);
 
-            if (data[j] < data[min_idx]) {
+            if (arr[j] < arr[min_idx]) {
                 min_idx = j;
-
                 drawData({
                     currentIndices: [min_idx],
                     comparingIndices: [j],
@@ -113,72 +107,56 @@ async function selectionSort() {
         }
 
         if (min_idx !== i) {
-            [data[i], data[min_idx]] = [data[min_idx], data[i]];
-
+            [arr[i], arr[min_idx]] = [arr[min_idx], arr[i]];
+            data[i] = arr[i];
+            data[min_idx] = arr[min_idx];
             drawData({
                 swappingIndices: [i, min_idx],
             });
             await sleep(delay);
         }
     }
-    // Mark all as sorted after completion
-    drawData({ sortedIndices: [...Array(data.length).keys()] });
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
 }
 
-// Quick Sort
-async function quickSort(low, high) {
-    if (shouldCancelSort) return;
-    if (low < high) {
-        let pi = await partition(low, high);
-        await quickSort(low, pi - 1);
-        await quickSort(pi + 1, high);
-    } else if (low >= 0 && high >= 0 && low < data.length && high < data.length) {
-        drawData({
-            sortedIndices: [...Array(data.length).keys()],
-        });
-    }
-}
+// Insertion Sort
+async function insertionSort(arr) {
+    let n = arr.length;
 
-async function partition(low, high) {
-    if (shouldCancelSort) return low;
-    let pivot = data[high];
-    let i = low - 1;
+    for (let i = 1; i < n; i++) {
+        if (shouldCancelSort) return;
+        let key = arr[i];
+        let j = i - 1;
 
-    for (let j = low; j <= high - 1; j++) {
-        if (shouldCancelSort) return low;
-        await checkPaused();
+        while (j >= 0 && arr[j] > key) {
+            if (shouldCancelSort) return;
+            await checkPaused();
 
-        drawData({
-            pivotIndex: high,
-            comparingIndices: [j],
-        });
-        await sleep(delay);
-
-        if (data[j] < pivot) {
-            i++;
-            [data[i], data[j]] = [data[j], data[i]];
+            arr[j + 1] = arr[j];
+            data[j + 1] = arr[j + 1];
 
             drawData({
-                swappingIndices: [i, j],
-                pivotIndex: high,
+                currentIndices: [j + 1],
+                comparingIndices: [j],
             });
             await sleep(delay);
+            j--;
         }
+        arr[j + 1] = key;
+        data[j + 1] = key;
+
+        drawData({
+            currentIndices: [j + 1],
+        });
+        await sleep(delay);
     }
-
-    [data[i + 1], data[high]] = [data[high], data[i + 1]];
-
-    drawData({
-        swappingIndices: [i + 1, high],
-    });
-    await sleep(delay);
-
-    return i + 1;
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
 }
 
 // Bubble Sort
-async function bubbleSort() {
-    let n = data.length;
+async function bubbleSort(arr) {
+    let n = arr.length;
+
     for (let i = 0; i < n - 1; i++) {
         if (shouldCancelSort) return;
         for (let j = 0; j < n - i - 1; j++) {
@@ -190,8 +168,10 @@ async function bubbleSort() {
             });
             await sleep(delay);
 
-            if (data[j] > data[j + 1]) {
-                [data[j], data[j + 1]] = [data[j + 1], data[j]];
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                data[j] = arr[j];
+                data[j + 1] = arr[j + 1];
 
                 drawData({
                     swappingIndices: [j, j + 1],
@@ -200,200 +180,259 @@ async function bubbleSort() {
             }
         }
     }
-    // Mark all as sorted after completion
-    drawData({ sortedIndices: [...Array(data.length).keys()] });
-}
-
-// Insertion Sort
-async function insertionSort() {
-    let n = data.length;
-    for (let i = 1; i < n; i++) {
-        if (shouldCancelSort) return;
-        let key = data[i];
-        let j = i - 1;
-
-        while (j >= 0 && data[j] > key) {
-            if (shouldCancelSort) return;
-            await checkPaused();
-
-            data[j + 1] = data[j];
-
-            drawData({
-                currentIndices: [j + 1],
-                comparingIndices: [j],
-            });
-            await sleep(delay);
-            j--;
-        }
-        data[j + 1] = key;
-
-        drawData({
-            currentIndices: [j + 1],
-        });
-        await sleep(delay);
-    }
-    // Mark all as sorted after completion
-    drawData({ sortedIndices: [...Array(data.length).keys()] });
-}
-
-// Merge Sort
-async function mergeSort(start, end) {
-    if (shouldCancelSort) return;
-    if (start >= end) {
-        return;
-    }
-
-    const mid = Math.floor((start + end) / 2);
-    await mergeSort(start, mid);
-    await mergeSort(mid + 1, end);
-    await merge(start, mid, end);
-
-    if (start === 0 && end === data.length - 1) {
-        // Mark all as sorted after completion
-        drawData({ sortedIndices: [...Array(data.length).keys()] });
-    }
-}
-
-async function merge(start, mid, end) {
-    if (shouldCancelSort) return;
-    let left = data.slice(start, mid + 1);
-    let right = data.slice(mid + 1, end + 1);
-    let i = 0, j = 0, k = start;
-
-    while (i < left.length && j < right.length) {
-        if (shouldCancelSort) return;
-        await checkPaused();
-
-        if (left[i] <= right[j]) {
-            data[k] = left[i];
-            i++;
-        } else {
-            data[k] = right[j];
-            j++;
-        }
-
-        drawData({
-            currentIndices: [k],
-        });
-        await sleep(delay);
-        k++;
-    }
-
-    while (i < left.length) {
-        if (shouldCancelSort) return;
-        await checkPaused();
-
-        data[k] = left[i];
-        drawData({
-            currentIndices: [k],
-        });
-        await sleep(delay);
-        i++;
-        k++;
-    }
-
-    while (j < right.length) {
-        if (shouldCancelSort) return;
-        await checkPaused();
-
-        data[k] = right[j];
-        drawData({
-            currentIndices: [k],
-        });
-        await sleep(delay);
-        j++;
-        k++;
-    }
-}
-
-// Heap Sort
-async function heapSort() {
-    let n = data.length;
-
-    // Build heap (rearrange array)
-    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-        if (shouldCancelSort) return;
-        await heapify(n, i);
-    }
-
-    // One by one extract elements
-    for (let i = n - 1; i >= 0; i--) {
-        if (shouldCancelSort) return;
-        await checkPaused();
-
-        [data[0], data[i]] = [data[i], data[0]];
-
-        drawData({
-            swappingIndices: [0, i],
-        });
-        await sleep(delay);
-
-        await heapify(i, 0);
-    }
-
-    // Mark all as sorted after completion
-    drawData({ sortedIndices: [...Array(data.length).keys()] });
-}
-
-async function heapify(n, i) {
-    if (shouldCancelSort) return;
-    let largest = i;
-    let left = 2 * i + 1;
-    let right = 2 * i + 2;
-
-    if (left < n && data[left] > data[largest]) {
-        largest = left;
-    }
-
-    if (right < n && data[right] > data[largest]) {
-        largest = right;
-    }
-
-    if (largest !== i) {
-        [data[i], data[largest]] = [data[largest], data[i]];
-
-        drawData({
-            swappingIndices: [i, largest],
-        });
-        await sleep(delay);
-
-        await heapify(n, largest);
-    }
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
 }
 
 // Shell Sort
-async function shellSort() {
-    let n = data.length;
+async function shellSort(arr) {
+    let n = arr.length;
 
     for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+        if (shouldCancelSort) return;
         for (let i = gap; i < n; i++) {
             if (shouldCancelSort) return;
             await checkPaused();
 
-            let temp = data[i];
-            let j;
-            for (j = i; j >= gap && data[j - gap] > temp; j -= gap) {
+            let temp = arr[i];
+            let j = i;
+
+            while (j >= gap && arr[j - gap] > temp) {
                 if (shouldCancelSort) return;
                 await checkPaused();
 
-                data[j] = data[j - gap];
-
+                arr[j] = arr[j - gap];
+                data[j] = arr[j];
                 drawData({
                     currentIndices: [j],
                     comparingIndices: [j - gap],
                 });
                 await sleep(delay);
+                j -= gap;
             }
-            data[j] = temp;
-
+            arr[j] = temp;
+            data[j] = arr[j];
             drawData({
                 currentIndices: [j],
             });
             await sleep(delay);
         }
     }
-    // Mark all as sorted after completion
-    drawData({ sortedIndices: [...Array(data.length).keys()] });
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
+}
+
+// Merge Sort
+async function mergeSort(arr) {
+    async function mergeSortHelper(arr, l, r) {
+        if (shouldCancelSort) return;
+        if (l >= r) {
+            return;
+        }
+
+        const m = Math.floor((l + r) / 2);
+        await mergeSortHelper(arr, l, m);
+        await mergeSortHelper(arr, m + 1, r);
+        await merge(arr, l, m, r);
+    }
+
+    async function merge(arr, l, m, r) {
+        if (shouldCancelSort) return;
+
+        const n1 = m - l + 1;
+        const n2 = r - m;
+
+        const L = arr.slice(l, m + 1);
+        const R = arr.slice(m + 1, r + 1);
+
+        let i = 0, j = 0, k = l;
+
+        while (i < n1 && j < n2) {
+            if (shouldCancelSort) return;
+            await checkPaused();
+
+            drawData({
+                currentIndices: [k],
+                comparingIndices: [l + i, m + 1 + j],
+            });
+            await sleep(delay);
+
+            if (L[i] <= R[j]) {
+                arr[k] = L[i];
+                data[k] = arr[k];
+                i++;
+            } else {
+                arr[k] = R[j];
+                data[k] = arr[k];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            if (shouldCancelSort) return;
+            await checkPaused();
+
+            arr[k] = L[i];
+            data[k] = arr[k];
+            i++;
+            k++;
+
+            drawData({
+                currentIndices: [k - 1],
+            });
+            await sleep(delay);
+        }
+
+        while (j < n2) {
+            if (shouldCancelSort) return;
+            await checkPaused();
+
+            arr[k] = R[j];
+            data[k] = arr[k];
+            j++;
+            k++;
+
+            drawData({
+                currentIndices: [k - 1],
+            });
+            await sleep(delay);
+        }
+    }
+
+    await mergeSortHelper(arr, 0, arr.length - 1);
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
+}
+
+// Quick Sort
+async function quickSort(arr) {
+    async function quickSortHelper(arr, low, high) {
+        if (shouldCancelSort) return;
+        if (low < high) {
+            let pi = await partition(arr, low, high);
+            await quickSortHelper(arr, low, pi - 1);
+            await quickSortHelper(arr, pi + 1, high);
+        }
+    }
+
+    async function partition(arr, low, high) {
+        if (shouldCancelSort) return;
+        let pivot = arr[high];
+        let i = low - 1;
+
+        drawData({
+            pivotIndex: high,
+        });
+        await sleep(delay);
+
+        for (let j = low; j < high; j++) {
+            if (shouldCancelSort) return;
+            await checkPaused();
+
+            drawData({
+                pivotIndex: high,
+                comparingIndices: [j],
+            });
+            await sleep(delay);
+
+            if (arr[j] < pivot) {
+                i++;
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+                data[i] = arr[i];
+                data[j] = arr[j];
+
+                drawData({
+                    swappingIndices: [i, j],
+                    pivotIndex: high,
+                });
+                await sleep(delay);
+            }
+        }
+        [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+        data[i + 1] = arr[i + 1];
+        data[high] = arr[high];
+
+        drawData({
+            swappingIndices: [i + 1, high],
+        });
+        await sleep(delay);
+
+        return i + 1;
+    }
+
+    await quickSortHelper(arr, 0, arr.length - 1);
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
+}
+
+// Heap Sort
+async function heapSort(arr) {
+    let n = arr.length;
+
+    async function heapify(arr, n, i) {
+        if (shouldCancelSort) return;
+        let largest = i;
+        let l = 2 * i + 1;
+        let r = 2 * i + 2;
+
+        if (l < n) {
+            await checkPaused();
+            drawData({
+                currentIndices: [i],
+                comparingIndices: [l],
+            });
+            await sleep(delay);
+            if (arr[l] > arr[largest]) {
+                largest = l;
+            }
+        }
+
+        if (r < n) {
+            await checkPaused();
+            drawData({
+                currentIndices: [i],
+                comparingIndices: [r],
+            });
+            await sleep(delay);
+            if (arr[r] > arr[largest]) {
+                largest = r;
+            }
+        }
+
+        if (largest !== i) {
+            [arr[i], arr[largest]] = [arr[largest], arr[i]];
+            data[i] = arr[i];
+            data[largest] = arr[largest];
+
+            drawData({
+                swappingIndices: [i, largest],
+            });
+            await sleep(delay);
+
+            await heapify(arr, n, largest);
+        }
+    }
+
+    // Build heap
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+        if (shouldCancelSort) return;
+        await heapify(arr, n, i);
+    }
+
+    // One by one extract elements
+    for (let i = n - 1; i > 0; i--) {
+        if (shouldCancelSort) return;
+        await checkPaused();
+
+        [arr[0], arr[i]] = [arr[i], arr[0]];
+        data[0] = arr[0];
+        data[i] = arr[i];
+
+        drawData({
+            swappingIndices: [0, i],
+        });
+        await sleep(delay);
+
+        await heapify(arr, i, 0);
+    }
+    drawData({ sortedIndices: [...Array(arr.length).keys()] });
 }
 
 // Function to start sorting
@@ -406,7 +445,7 @@ async function startSort(type) {
         }
     }
 
-    reshuffleData(50);
+    reshuffleData();
     await sleep(100); // Wait for reshuffle to complete
 
     shouldCancelSort = false;
@@ -422,31 +461,34 @@ async function startSort(type) {
     sortingInProgress = true;
 
     try {
+        let arrCopy = [...data]; // Make a copy of the data
+
         switch (type) {
             case 'selection':
-                await selectionSort();
-                break;
-            case 'quick':
-                await quickSort(0, data.length - 1);
-                break;
-            case 'merge':
-                await mergeSort(0, data.length - 1);
-                break;
-            case 'bubble':
-                await bubbleSort();
+                await selectionSort(arrCopy);
                 break;
             case 'insertion':
-                await insertionSort();
+                await insertionSort(arrCopy);
                 break;
-            case 'heap':
-                await heapSort();
+            case 'bubble':
+                await bubbleSort(arrCopy);
                 break;
             case 'shell':
-                await shellSort();
+                await shellSort(arrCopy);
+                break;
+            case 'merge':
+                await mergeSort(arrCopy);
+                break;
+            case 'quick':
+                await quickSort(arrCopy);
+                break;
+            case 'heap':
+                await heapSort(arrCopy);
                 break;
             default:
                 break;
         }
+
     } catch (e) {
         // Handle any exceptions if necessary
     }
@@ -460,8 +502,15 @@ async function startSort(type) {
     }
 }
 
+// Pause the sort when the Compare Algorithms button is clicked
+document.getElementById('compare-btn').addEventListener('click', function() {
+    if (!isPaused) {
+        togglePause();
+    }
+});
+
 // Initialize the visualizer with random data
-reshuffleData(50);
+reshuffleData();
 drawData();
 
 // Add speed control display
@@ -473,9 +522,12 @@ speedSlider.oninput = function () {
     speedDisplay.textContent = this.value;
 };
 
+// Add array size control
+const sizeSlider = document.getElementById('size');
+const sizeDisplay = document.getElementById('size-display');
 
-// Function to toggle the info section
-function toggleInfo() {
-    const infoSection = document.getElementById('info-section');
-    infoSection.classList.toggle('hidden');
-}
+sizeSlider.oninput = function () {
+    arraySize = this.value;
+    sizeDisplay.textContent = this.value;
+    reshuffleData();
+};

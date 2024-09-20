@@ -1,14 +1,22 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const algorithmItems = document.querySelectorAll('.algorithm-item');
+// Accordion functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const acc = document.getElementsByClassName('accordion');
 
-    algorithmItems.forEach(item => {
-        item.addEventListener('click', function () {
-            const info = this.querySelector('.algo-info');
-            if (info.classList.contains('hidden')) {
-                info.classList.remove('hidden');
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener('click', function() {
+            this.classList.toggle('active');
+            const panel = this.nextElementSibling;
+
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
             } else {
-                info.classList.add('hidden');
+                panel.style.display = 'block';
             }
         });
-    });
+    }
 });
+
+// Function to go back to the main page
+function goBack() {
+    window.location.href = 'index.html';
+}

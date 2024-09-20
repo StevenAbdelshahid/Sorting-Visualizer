@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Sorting Visualizer</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <h1>Sorting Visualizer</h1>
     <div id="main-container">
         <div id="left-panel">
-            <button id="reshuffle-btn" onclick="reshuffleData(50)">&#x21bb;</button>
+            <button id="reshuffle-btn" onclick="reshuffleData()">&#x21bb;</button>
             <button id="pause-btn" onclick="togglePause()">&#x23F8;</button>
         </div>
         <canvas id="visualizer" width="1000" height="600"></canvas>
@@ -18,24 +19,32 @@
     <div id="controls">
         <div id="sort-buttons">
             <button id="selection-btn" onclick="startSort('selection')">Selection Sort</button>
-            <button id="quick-btn" onclick="startSort('quick')">Quick Sort</button>
-            <button id="merge-btn" onclick="startSort('merge')">Merge Sort</button>
-            <button id="bubble-btn" onclick="startSort('bubble')">Bubble Sort</button>
             <button id="insertion-btn" onclick="startSort('insertion')">Insertion Sort</button>
-            <button id="heap-btn" onclick="startSort('heap')">Heap Sort</button>
+            <button id="bubble-btn" onclick="startSort('bubble')">Bubble Sort</button>
             <button id="shell-btn" onclick="startSort('shell')">Shell Sort</button>
+            <button id="merge-btn" onclick="startSort('merge')">Merge Sort</button>
+            <button id="quick-btn" onclick="startSort('quick')">Quick Sort</button>
+            <button id="heap-btn" onclick="startSort('heap')">Heap Sort</button>
         </div>
     </div>
 
-    <div id="speed-control">
-        <label for="speed">Speed:</label>
-        <input type="range" id="speed" min="1" max="100" value="50">
-        <span id="speed-display">50</span>
+    <div id="slider-controls">
+        <div id="speed-control">
+            <label for="speed">Speed:</label>
+            <input type="range" id="speed" min="1" max="100" value="50">
+            <span id="speed-display">50</span>
+        </div>
+        <div id="size-control">
+            <label for="size">Array Size:</label>
+            <input type="range" id="size" min="10" max="200" value="50">
+            <span id="size-display">50</span>
+        </div>
     </div>
 
     <!-- Info Button -->
     <a href="info.html" id="info-btn">i</a>
 
-    <script src="script.js"></script>
+    <!-- Compare Algorithms Button at the bottom left -->
+    <a href="compare.html" id="compare-btn">Compare Algorithms</a>
 </body>
 </html>

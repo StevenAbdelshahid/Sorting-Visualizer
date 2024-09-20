@@ -1,3 +1,4 @@
+/* General Styles */
 body {
     background-color: #1e272e;
     color: #ecf0f1;
@@ -54,7 +55,6 @@ canvas {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 20px;
 }
 
 #sort-buttons button {
@@ -72,11 +72,22 @@ canvas {
     color: #ecf0f1;
 }
 
-#speed-control {
+#sort-buttons button:hover {
+    background-color: #7AC5F2;
+}
+
+#slider-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: 10px;
 }
 
-#speed-display {
+#speed-control, #size-control {
+    margin: 0 20px;
+}
+
+#speed-display, #size-display {
     margin-left: 10px;
     font-weight: bold;
 }
@@ -102,57 +113,150 @@ canvas {
     background-color: #7AC5F2;
 }
 
-/* Styles for info.html */
+/* Position the Compare Algorithms button at the bottom left */
+#compare-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 150px;
+    height: 40px;
+    font-size: 16px;
+    background-color: #ffa801;
+    color: #1e272e;
+    text-decoration: none;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 5px;
+}
 
-/* Styles for info.html */
+#compare-btn:hover {
+    background-color: #e58e26;
+}
 
-#info-content {
+/* Styles for compare.html */
+
+#comparison-container {
     width: 80%;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    text-align: left;
+    text-align: center;
 }
 
-#algorithm-list {
-    list-style: none;
-    padding: 0;
+#comparison-container p {
+    font-size: 1.2em;
 }
 
-.algorithm-item {
-    background-color: #2f3640;
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: 10px;
+#comparison-container label {
+    display: inline-block;
+    margin: 10px;
+}
+
+#comparison-container button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ffa801;
+    color: #1e272e;
+    border: none;
     cursor: pointer;
+    font-size: 16px;
 }
 
-.algorithm-item h2 {
-    margin-top: 0;
+#comparison-container button:hover {
+    background-color: #e58e26;
 }
 
-.algo-info.hidden {
-    display: none;
-}
-
-.algo-info {
+#data-size-input {
     margin-top: 10px;
 }
 
-.algo-info ul {
-    list-style: disc;
-    padding-left: 20px;
+#data-size-input label {
+    margin-right: 10px;
 }
 
+#data-size-input input {
+    width: 100px;
+    padding: 5px;
+}
+
+/* Styles for comparison results */
+#comparison-results {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
+    text-align: center;
+}
+
+#comparison-results.hidden {
+    display: none;
+}
+
+.visualization-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.visualization {
+    margin: 10px;
+}
+
+.visualization canvas {
+    background-color: #2f3640;
+    border: 2px solid #ecf0f1;
+}
+
+.metrics {
+    margin-top: 10px;
+    color: #ecf0f1;
+}
+
+/* Back Button on Comparison Page */
 #back-btn {
-    display: inline-block;
     margin-top: 20px;
     padding: 10px 20px;
     background-color: #87CEFA;
     color: #1e272e;
-    text-decoration: none;
-    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 #back-btn:hover {
     background-color: #7AC5F2;
+}
+
+/* Styles for info.html */
+
+.accordion {
+    background-color: #34495e;
+    color: #ecf0f1;
+    cursor: pointer;
+    padding: 18px;
+    width: 80%;
+    max-width: 800px;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1.2em;
+    margin: 10px auto;
+    transition: 0.4s;
+}
+
+.active, .accordion:hover {
+    background-color: #2c3e50;
+}
+
+.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: #2f3640;
+    overflow: hidden;
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    color: #ecf0f1;
+}
+
+.panel p {
+    padding: 10px 0;
 }

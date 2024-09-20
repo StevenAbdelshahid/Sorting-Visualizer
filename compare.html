@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Compare Sorting Algorithms</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="compare.js" defer></script>
+</head>
+<body>
+    <h1>Compare Sorting Algorithms</h1>
+    <div id="comparison-container">
+        <p>Select sorting algorithms to compare:</p>
+        <form id="comparison-form">
+            <div id="algorithm-selection">
+                <label><input type="checkbox" name="algorithm" value="selection"> Selection Sort</label>
+                <label><input type="checkbox" name="algorithm" value="insertion"> Insertion Sort</label>
+                <label><input type="checkbox" name="algorithm" value="bubble"> Bubble Sort</label>
+                <label><input type="checkbox" name="algorithm" value="shell"> Shell Sort</label>
+                <label><input type="checkbox" name="algorithm" value="merge"> Merge Sort</label>
+                <label><input type="checkbox" name="algorithm" value="quick"> Quick Sort</label>
+                <label><input type="checkbox" name="algorithm" value="heap"> Heap Sort</label>
+            </div>
+            <div id="data-size-input">
+                <label for="data-size">Data Size (max 1000):</label>
+                <input type="number" id="data-size" name="data-size" value="50" min="10" max="1000">
+            </div>
+            <button type="button" onclick="startComparison()">Compare</button>
+        </form>
+    </div>
+
+    <!-- Comparison Results -->
+    <div id="comparison-results" class="hidden">
+        <div class="visualization-container" id="visualization-container">
+            <!-- Visualizations will be inserted here -->
+        </div>
+        <!-- Back Button -->
+        <button id="back-btn" onclick="goBack()">Back to Visualizer</button>
+    </div>
+</body>
+</html>
