@@ -90,7 +90,7 @@ async function startComparison() {
         promises.push(promise);
     });
 
-    // Adjust layout for two visualizations per row
+    // Adjust layout for visualizations
     adjustVisualizationLayout();
 
     // Wait for all algorithms to finish
@@ -101,18 +101,33 @@ async function startComparison() {
 function adjustVisualizationLayout() {
     const visualizations = document.querySelectorAll('.visualization');
     visualizations.forEach((viz, index) => {
-        if (index % 2 === 0) {
-            viz.style.clear = 'both';
-        }
-        viz.style.width = '45%';
-        viz.style.float = 'left';
-        viz.style.margin = '2.5%';
+        viz.style.width = '48%';
+        viz.style.display = 'inline-block';
+        viz.style.verticalAlign = 'top';
+        viz.style.margin = '1%';
     });
 }
 
 // Function to go back to the main page
 function goBack() {
     window.location.href = 'index.html';
+}
+
+// Function to redo the comparison
+function redoComparison() {
+    // Reset the comparison page to initial state
+    const comparisonForm = document.getElementById('comparison-form');
+    const comparisonResults = document.getElementById('comparison-results');
+    const visualizationContainer = document.getElementById('visualization-container');
+
+    // Clear the visualization container
+    visualizationContainer.innerHTML = '';
+
+    // Hide the comparison results
+    comparisonResults.classList.add('hidden');
+
+    // Show the form again
+    comparisonForm.style.display = 'block';
 }
 
 // Create Sorting Algorithm

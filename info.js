@@ -4,13 +4,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     for (let i = 0; i < acc.length; i++) {
         acc[i].addEventListener('click', function() {
+            // Toggle 'active' class on the clicked header
             this.classList.toggle('active');
+
+            // Get the next sibling, which should be the 'algo-info' div
             const panel = this.nextElementSibling;
 
-            if (panel.style.display === 'block') {
-                panel.style.display = 'none';
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
             } else {
-                panel.style.display = 'block';
+                panel.classList.add('hidden');
             }
         });
     }
