@@ -1,133 +1,169 @@
-// compare.js
+/*****************************************************
+ *  compare.js  —  Compare multiple sorts side‑by‑side
+ *  Adds a Chart.js runtime‑vs‑N line‑chart
+ *****************************************************/
 
-// Global variables
-let dataSize = 50; // Default data size
-let originalData = [];
-let delay = 50; // Adjust delay for visualization
+/* ---------- GLOBALS ---------- */
+let dataSize        = 50;          // default, will be overwritten in loop
+let originalData    = [];
+let delay           = 50;          // visualization delay, same as main page
+const SIZES_FOR_CHART = [50, 100, 150, 200];  // X‑axis points
+const chartData     = {};          // { algo: [t50,t100,…] }
 
-// Initialize data
+/* ---------- UTILITY ---------- */
 function initializeData() {
-    originalData = Array.from({ length: dataSize }, () => Math.floor(Math.random() * 100) + 1);
+    originalData = Array.from({ length: dataSize },
+                  () => Math.floor(Math.random() * 100) + 1);
 }
 
-// Helper function to delay sorting for visualization
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- PAGE CONTROLS ---------- */
+function goBack()            { window.location.href = 'index.html'; }
+function redoComparison()    {
+    document.getElementById('visualization-container').innerHTML = '';
+    document.getElementById('comparison-results').classList.add('hidden');
+    document.getElementById('comparison-form').style.display = 'block';
 }
 
-// Start the comparison
+/* ---------- MAIN ENTRY ---------- */
 async function startComparison() {
-    const selectedAlgorithms = Array.from(document.querySelectorAll('input[name="algorithm"]:checked')).map(cb => cb.value);
 
-    if (selectedAlgorithms.length === 0) {
+    /* gather chosen algorithms */
+    const selectedAlgorithms = Array.from(
+        document.querySelectorAll('input[name="algorithm"]:checked')
+    ).map(cb => cb.value);
+
+    if (!selectedAlgorithms.length) {
         alert('Please select at least one algorithm.');
         return;
     }
 
-    // Get data size from input
-    const dataSizeInput = document.getElementById('data-size');
-    dataSize = parseInt(dataSizeInput.value);
-    if (isNaN(dataSize) || dataSize < 10 || dataSize > 1000) {
-        alert('Please enter a valid data size between 10 and 1000.');
+    /* validate array size from user input (first round only) */
+    const sizeInput = document.getElementById('data-size');
+    const sizeVal   = parseInt(sizeInput.value);
+    if (isNaN(sizeVal) || sizeVal < 10 || sizeVal > 1000) {
+        alert('Enter a valid size (10–1000).');
         return;
     }
 
-    // Initialize data
-    initializeData();
+    /* reset chart‑data buckets */
+    selectedAlgorithms.forEach(a => chartData[a] = []);
 
-    // Hide the form and show the comparison results section
-    const comparisonForm = document.getElementById('comparison-form');
-    const comparisonResults = document.getElementById('comparison-results');
-    const visualizationContainer = document.getElementById('visualization-container');
+    /* hide form / show results wrapper */
+    document.getElementById('comparison-form').style.display = 'none';
+    const resultsSection = document.getElementById('comparison-results');
+    resultsSection.classList.remove('hidden');
 
-    comparisonForm.style.display = 'none';
-    comparisonResults.classList.remove('hidden');
+    const vizContainer = document.getElementById('visualization-container');
 
-    // Create visualizations for each selected algorithm
-    const promises = [];
-    visualizationContainer.innerHTML = ''; // Clear previous visualizations
+    /* --------  LOOP OVER PRE‑SET SIZES  -------- */
+    for (const N of SIZES_FOR_CHART) {
 
-    selectedAlgorithms.forEach(algo => {
-        // Create canvas and context
-        const canvas = document.createElement('canvas');
-        canvas.width = 400;
-        canvas.height = 300;
-        const context = canvas.getContext('2d');
+        dataSize = N;
+        initializeData();                 // fills originalData
 
-        // Create a container for each visualization
-        const vizContainer = document.createElement('div');
-        vizContainer.classList.add('visualization');
+        /* clear previous visualizations for this round */
+        vizContainer.innerHTML = '';
+        const roundPromises = [];
 
-        // Add algorithm name
-        const algoTitle = document.createElement('h3');
-        algoTitle.textContent = algo.charAt(0).toUpperCase() + algo.slice(1) + ' Sort';
-        vizContainer.appendChild(algoTitle);
+        /* build one canvas per algorithm */
+        selectedAlgorithms.forEach(algo => {
 
-        // Add canvas to container
-        vizContainer.appendChild(canvas);
+            /* dynamic DOM creation */
+            const canvas   = document.createElement('canvas');
+            canvas.width   = 400;
+            canvas.height  = 300;
+            const context  = canvas.getContext('2d');
 
-        // Add metrics placeholder
-        const metricsDiv = document.createElement('div');
-        metricsDiv.classList.add('metrics');
-        metricsDiv.innerHTML = `
-            <p>Execution Time: <span class="time">Calculating...</span> ms</p>
-            <p>Comparisons: <span class="comparisons">Calculating...</span></p>
-            <p>Swaps: <span class="swaps">Calculating...</span></p>
-        `;
-        vizContainer.appendChild(metricsDiv);
+            /* wrapper card */
+            const card     = document.createElement('div');
+            card.classList.add('visualization');
 
-        // Add to visualization container
-        visualizationContainer.appendChild(vizContainer);
+            const title    = document.createElement('h3');
+            title.textContent = algo.charAt(0).toUpperCase() + algo.slice(1) + ' Sort';
+            card.appendChild(title);
+            card.appendChild(canvas);
 
-        // Start sorting algorithm
-        const promise = createSortingAlgorithm(algo, originalData, canvas, context).then(result => {
-            // Update metrics
-            metricsDiv.querySelector('.time').textContent = result.time;
-            metricsDiv.querySelector('.comparisons').textContent = result.comparisons;
-            metricsDiv.querySelector('.swaps').textContent = result.swaps;
+            /* metrics placeholder */
+            const metrics  = document.createElement('div');
+            metrics.classList.add('metrics');
+            metrics.innerHTML =
+              `<p>Execution Time: <span class="time">…</span> ms</p>
+               <p>Comparisons:    <span class="comparisons">…</span></p>
+               <p>Swaps:          <span class="swaps">…</span></p>`;
+            card.appendChild(metrics);
+
+            vizContainer.appendChild(card);
+
+            /* kick off algorithm */
+            const p = createSortingAlgorithm(algo, originalData, canvas, context)
+                  .then(res => {
+                      metrics.querySelector('.time').textContent        = res.time;
+                      metrics.querySelector('.comparisons').textContent = res.comparisons;
+                      metrics.querySelector('.swaps').textContent       = res.swaps;
+
+                      chartData[algo].push(parseFloat(res.time));
+                  });
+
+            roundPromises.push(p);
         });
 
-        promises.push(promise);
-    });
+        /* two‑column layout */
+        adjustVisualizationLayout();
+        await Promise.all(roundPromises);
+    }
 
-    // Adjust layout for visualizations
-    adjustVisualizationLayout();
-
-    // Wait for all algorithms to finish
-    await Promise.all(promises);
+    /* ALL ROUNDS COMPLETE → BUILD CHART */
+    buildRuntimeChart(selectedAlgorithms);
 }
 
-// Adjust visualization layout
+/* ---------- LAYOUT HELPER ---------- */
 function adjustVisualizationLayout() {
-    const visualizations = document.querySelectorAll('.visualization');
-    visualizations.forEach((viz, index) => {
-        viz.style.width = '48%';
-        viz.style.display = 'inline-block';
-        viz.style.verticalAlign = 'top';
-        viz.style.margin = '1%';
+    document.querySelectorAll('.visualization').forEach(viz => {
+        viz.style.width          = '48%';
+        viz.style.margin         = '1%';
+        viz.style.display        = 'inline-block';
+        viz.style.verticalAlign  = 'top';
     });
 }
 
-// Function to go back to the main page
-function goBack() {
-    window.location.href = 'index.html';
-}
+/* ---------- RUNTIME CHART ---------- */
+function buildRuntimeChart(selectedAlgorithms) {
 
-// Function to redo the comparison
-function redoComparison() {
-    // Reset the comparison page to initial state
-    const comparisonForm = document.getElementById('comparison-form');
-    const comparisonResults = document.getElementById('comparison-results');
-    const visualizationContainer = document.getElementById('visualization-container');
+    const chartCanvas = document.getElementById('runtimeChart');
+    chartCanvas.style.display = 'block';        // reveal canvas
 
-    // Clear the visualization container
-    visualizationContainer.innerHTML = '';
+    /* build dataset array for Chart.js */
+    const datasets = selectedAlgorithms.map(algo => ({
+        label : algo.charAt(0).toUpperCase() + algo.slice(1) + ' Sort',
+        data  : chartData[algo],
+        borderWidth : 3,
+        fill  : false,
+        tension: 0.25            // slight smoothing
+    }));
 
-    // Hide the comparison results
-    comparisonResults.classList.add('hidden');
-
-    // Show the form again
-    comparisonForm.style.display = 'block';
+    new Chart(chartCanvas, {
+        type : 'line',
+        data : {
+            labels   : SIZES_FOR_CHART,         // X‑axis values
+            datasets : datasets
+        },
+        options : {
+            plugins : {
+                legend: { labels: { font: { size: 20 } } }
+            },
+            scales  : {
+                x : {
+                    title: { display:true, text:'Array Size (N)', font:{ size:24 } }
+                },
+                y : {
+                    title: { display:true, text:'Execution Time (ms)', font:{ size:24 } },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 }
 
 // Create Sorting Algorithm
